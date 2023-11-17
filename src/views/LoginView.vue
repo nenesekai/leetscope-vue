@@ -8,7 +8,6 @@ import type { AxiosInstance } from 'axios'
 
 const store = useUserStore()
 const router = useRouter()
-const token = ref('')
 const axios = inject('axios') as AxiosInstance
 const loginFormRef = ref<FormInstance>()
 const loginForm = reactive({ name: '', password: '' })
