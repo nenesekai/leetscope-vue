@@ -5,14 +5,14 @@ import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
 
 const store = useUserStore()
-const { token, isLogin, login, logout } = storeToRefs(store)
 </script>
 
 <template>
   <el-container>
-    <el-text>Account Settings</el-text>
-    <el-button @click="store.token = '114514'">Login</el-button>
-    <el-text>Current Token: {{store.token}}</el-text>
+    <el-space>
+      <el-text>Account Settings</el-text>
+      <el-text>Your Token is: {{ store.token }}</el-text>
+    </el-space>
   </el-container>
 </template>
 

@@ -21,8 +21,8 @@ const activeIndex = computed(() => { return route.path })
     <div class="flex-grow" />
     <el-sub-menu v-if="store.isLogin" index="/account">
       <template #title>Account</template>
-      <el-menu-item index="/account/settings">Settings</el-menu-item>
-      <el-menu-item index="/account/log-out">Log Out</el-menu-item>
+      <el-menu-item index="/settings">Settings</el-menu-item>
+      <el-menu-item index="/logout" @click="store.logout">Log Out</el-menu-item>
     </el-sub-menu>
     <el-menu-item v-else index="/login">Login</el-menu-item>
   </el-menu>

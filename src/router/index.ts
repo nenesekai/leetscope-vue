@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Container from "@/views/Container.vue";
 import AssignmentListView from "@/views/AssignmentListView.vue";
 import AccountSettingsView from "@/views/AccountSettingsView.vue";
+import LoginView from "@/views/LoginView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,14 +18,19 @@ const router = createRouter({
           component: AssignmentListView
         },
         {
-          path: 'account/settings',
+          path: 'settings',
           component: AccountSettingsView
         },
         {
-          path: 'account/log-out',
+          path: 'logout',
           redirect: '/assignments'
         }
       ]
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
     }
   ]
 })

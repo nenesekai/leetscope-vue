@@ -10,5 +10,14 @@ export const useUserStore = defineStore('user', {
   },
   getters: {
     isLogin: (state) => state.token != ''
-  }
+  },
+  actions: {
+    login(token: string) {
+      this.token = token
+    },
+    logout() {
+      this.token = ''
+    }
+  },
+  persist: true
 })
