@@ -1,28 +1,37 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/user";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { useRoute, useRouter } from "vue-router";
-import { reactive, Ref, ref } from "vue";
+import { useUserStore } from '@/stores/user'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
+import { inject, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import type { AxiosInstance } from 'axios'
 
 const store = useUserStore()
 const router = useRouter()
 const token = ref('')
+const axios = inject('axios') as AxiosInstance
 const loginFormRef = ref<FormInstance>()
-const loginForm = reactive({name: '', password: ''})
+const loginForm = reactive({ name: '', password: '' })
 const rules = reactive<FormRules<typeof loginForm>>({
   name: [{ required: true, message: 'Username cannot be blank', trigger: 'blur' }],
   password: [{ required: true, message: 'Password cannot be blank', trigger: 'blur' }]
 })
 
 function login() {
-  if (token.value == '') {
-    ElMessageBox.alert('Token cannot be blank')
-    return
-  }
-  store.login(token.value)
-  ElMessage.success('Login Successfully, Redirecting')
-  router.push('/assignments')
+  axios
+    .post('http://localhost:8080/user/login', loginForm)
+    .then((response: { data: { code: string, msg: string, token?: string } }) => {
+      if (response.data.code == 'SUCCESS' && response.data.token != null) {
+        ElMessage.success(response.data.msg)
+        store.token = response.data.token
+        router.push('/assignments')
+      } else {
+        ElMessage.error(response.data.msg)
+      }
+    })
+    .catch((err) => {
+      ElMessage.error(err.message)
+    })
 }
 </script>
 
@@ -31,13 +40,7 @@ function login() {
     <el-card class="login-card" shadow="always">
       <div class="login-header-container"><el-text class="login-header">LeetScope</el-text></div>
       <div class="flex-grow"></div>
-      <el-form
-          ref="loginFormRef"
-          :model="loginForm"
-          :rules="rules"
-          label-width="80px"
-          status-icon
-      >
+      <el-form ref="loginFormRef" :model="loginForm" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="Username" prop="name">
           <el-input v-model="loginForm.name" />
         </el-form-item>
