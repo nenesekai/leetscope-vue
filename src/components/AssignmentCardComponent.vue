@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 
 defineProps({
-  id: BigInt,
+  id: Number,
   title: String,
   description: String,
   deadline: String,
   allowedAttempts: Number
 })
 const router = useRouter()
-const dateString = (str: string): string => {
-  const date = new Date(str)
-  return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.toLocaleTimeString()
-}
 </script>
 
 <template>
@@ -25,8 +22,7 @@ const dateString = (str: string): string => {
         <el-button type="primary" @click="router.push('/assignmentDetail/' + id)">Details</el-button>
       </template>
       <el-descriptions-item v-if="description != undefined" label="Description">{{description}}</el-descriptions-item>
-      <el-descriptions-item v-if="deadline != undefined" label="Deadline">{{dateString(deadline)}}</el-descriptions-item>
-      <el-descriptions-item v-if="allowedAttempts != undefined" label="Allowed Attempts">{{allowedAttempts}}</el-descriptions-item>
+      <el-descriptions-item v-if="deadline != undefined" label="Deadline">{{new Date(deadline).toLocaleString()}}</el-descriptions-item>
     </el-descriptions>
   </el-card>
 </template>

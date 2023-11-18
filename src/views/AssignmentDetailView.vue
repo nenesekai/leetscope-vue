@@ -2,53 +2,66 @@
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api";
 import type { AxiosResponse } from "axios";
+import { computed, ref } from "vue";
 
 const route = useRoute()
 const router = useRouter()
-const assignment: Assignment | undefined = undefined
-api.getAssignmentById(route.params.id).then((response: AxiosResponse) => {
-
+const assignment = ref<Assignment>()
+const isOverdue = computed(() => {
+  return assignment.value == undefined ? false : (new Date(assignment.value.deadline) < new Date())
+})
+const invalid = ref(false)
+api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) => {
+  if (response.data.code == 'SUCCESS') {
+    assignment.value = response.data.data
+  } else {
+    invalid.value = true
+  }
 })
 </script>
 
 <template>
-  <el-page-header @back="router.back()">
-    <template #content>
-      <div class="flex items-center">
-        <span class="text-large font-600 mr-3"> Title </span>
-        <el-tag>Default</el-tag>
-      </div>
-    </template>
+  <el-result
+    icon="error"
+    title="Invalid Assignment ID"
+    sub-title="Please do not modify the url :)"
+    v-if="invalid"
+  >
     <template #extra>
-      <div class="flex items-center">
-        <el-button>Print</el-button>
-        <el-button type="primary" class="ml-2">Edit</el-button>
-      </div>
+      <el-button type="primary" @click="router.push('/assignments')">Go Back to Dashboard</el-button>
     </template>
+  </el-result>
+  <div class="assignment-detail-container" v-else>
+    <el-page-header @back="router.back()">
+      <template #content>
+        <div class="flex items-center">
+          <span> {{assignment != undefined ? assignment.title : ''}} </span>
+        </div>
+      </template>
+      <template #extra>
+        <div class="flex items-center">
+          <el-button>Print</el-button>
+          <el-button type="primary" class="ml-2">Edit</el-button>
+        </div>
+      </template>
 
-    <el-descriptions :column="3" size="small" class="mt-4">
-      <el-descriptions-item label="Username"
-      >kooriookami</el-descriptions-item
-      >
-      <el-descriptions-item label="Telephone"
-      >18100000000</el-descriptions-item
-      >
-      <el-descriptions-item label="Place">Suzhou</el-descriptions-item>
-      <el-descriptions-item label="Remarks">
-        <el-tag size="small">School</el-tag>
-      </el-descriptions-item>
-      <el-descriptions-item label="Address"
-      >No.1188, Wuzhong Avenue, Wuzhong District, Suzhou, Jiangsu Province
-      </el-descriptions-item>
-    </el-descriptions>
-    <p class="mt-4 text-sm">
-      Element Plus team uses <b>weekly</b> release strategy under normal
-      circumstance, but critical bug fixes would require hotfix so the actual
-      release number <b>could be</b> more than 1 per week.
-    </p>
-  </el-page-header>
+      <el-descriptions :column="3" size="large" class="assignment-detail-description">
+        <el-descriptions-item v-if="assignment != undefined" label="Create Time">{{new Date(assignment.createTime).toLocaleString()}}</el-descriptions-item>
+        <el-descriptions-item v-if="assignment != undefined" label="Deadline">{{new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
+        <el-descriptions-item v-if="assignment != undefined" label="Allowed Attempts">{{assignment.allowedAttempts}}</el-descriptions-item>
+        <el-descriptions-item label="Status">
+          <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
+          <el-tag v-else>Active</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item v-if="assignment != undefined && assignment.description != undefined" label="Description">{{assignment.description}}</el-descriptions-item>
+      </el-descriptions>
+
+    </el-page-header>
+  </div>
 </template>
 
 <style scoped>
-
+.assignment-detail-description {
+  margin: 20px;
+}
 </style>

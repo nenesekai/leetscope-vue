@@ -3,8 +3,8 @@ interface Assignment {
   uid: string
   title: string
   description?: string
-  createTime: Date
-  deadline: Date
+  createTime: string
+  deadline: string
   allowedAttempts: number
 }
 

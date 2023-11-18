@@ -18,7 +18,7 @@ api.listAllAssignments()
 
 <template>
   <div class="assignment-list-container">
-    <el-space direction="vertical">
+    <el-space direction="vertical" size="large">
       <AssignmentCardComponent v-for="assignment in assignments" v-bind="assignment" />
     </el-space>
   </div>
