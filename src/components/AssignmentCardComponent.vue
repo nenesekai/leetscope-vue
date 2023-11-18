@@ -4,10 +4,14 @@ defineProps({
   description: String,
   deadline: String
 })
+const dateString = (str: string): string => {
+  const date = new Date(str)
+  return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.toLocaleTimeString()
+}
 </script>
 
 <template>
-  <el-card class="assignment-card">
+  <el-card class="assignment-card" shadow="hover">
     <el-descriptions
       :title="title"
       :column="1"
@@ -16,7 +20,7 @@ defineProps({
         <el-button type="primary">Details</el-button>
       </template>
       <el-descriptions-item v-if="description != undefined" label="Description">{{description}}</el-descriptions-item>
-      <el-descriptions-item label="Deadline">{{deadline != undefined ? new Date(deadline).toDateString() : ''}}</el-descriptions-item>
+      <el-descriptions-item v-if="deadline != undefined" label="Deadline">{{dateString(deadline)}}</el-descriptions-item>
     </el-descriptions>
   </el-card>
 </template>
