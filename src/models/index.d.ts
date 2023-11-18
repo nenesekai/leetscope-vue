@@ -7,3 +7,8 @@ interface Assignment {
   deadline: Date
   allowedAttempts: number
 }
+
+interface Result {
+  code: string,
+  msg: string
+}

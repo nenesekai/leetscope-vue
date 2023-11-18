@@ -6,6 +6,7 @@ import { inject, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { AxiosInstance } from 'axios'
 import { useDark } from "@vueuse/core";
+import api from "@/api";
 
 const store = useUserStore()
 const isDark = useDark()
@@ -19,9 +20,7 @@ const rules = reactive<FormRules<typeof loginForm>>({
 })
 
 function login() {
-  // TODO: 改成使用API文件的访问
-  axios
-    .post('http://localhost:8080/user/login', loginForm)
+  api.login(loginForm)
     .then((response: { data: { code: string, msg: string, token?: string } }) => {
       if (response.data.code == 'SUCCESS' && response.data.token != null) {
         ElMessage.success(response.data.msg)

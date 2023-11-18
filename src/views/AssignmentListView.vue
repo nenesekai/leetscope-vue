@@ -3,14 +3,12 @@ import { inject, ref, Ref } from 'vue'
 import type { AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
 import AssignmentCardComponent from "@/components/AssignmentCardComponent.vue";
+import api from "@/api";
 
-const axios = inject('axios') as AxiosInstance
 const assignments: Ref<Assignment[] | undefined> = ref()
-const test = ref()
 
-axios
-  .get('http://localhost:8080/assignment/listAll')
-  .then((response: { data: { data: Assignment[] } }) => {
+api.listAllAssignments()
+  .then((response: { data: { data: Assignment[] } } ) => {
     assignments.value = response.data.data
   })
   .catch((err) => {
