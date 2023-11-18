@@ -5,8 +5,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { inject, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { AxiosInstance } from 'axios'
+import { useDark } from "@vueuse/core";
 
 const store = useUserStore()
+const isDark = useDark()
 const router = useRouter()
 const axios = inject('axios') as AxiosInstance
 const loginFormRef = ref<FormInstance>()
@@ -17,6 +19,7 @@ const rules = reactive<FormRules<typeof loginForm>>({
 })
 
 function login() {
+  // TODO: 改成使用API文件的访问
   axios
     .post('http://localhost:8080/user/login', loginForm)
     .then((response: { data: { code: string, msg: string, token?: string } }) => {
@@ -37,8 +40,7 @@ function login() {
 <template>
   <div class="login-form-container">
     <el-card class="login-card" shadow="always">
-      <div class="login-header-container"><el-text class="login-header">LeetScope</el-text></div>
-      <div class="flex-grow"></div>
+      <div class="login-header-container"><el-text class="login-header">Login to LeetScope</el-text></div>
       <el-form ref="loginFormRef" :model="loginForm" :rules="rules" label-width="80px" status-icon>
         <el-form-item label="Username" prop="name">
           <el-input v-model="loginForm.name" />
@@ -48,7 +50,7 @@ function login() {
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="login">Login</el-button>
-          <el-button>Register</el-button>
+          <el-button @click="router.push('/register')">Register</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="router.push('/assignments')">Continue as Guest</el-button>
@@ -63,7 +65,7 @@ function login() {
   justify-content: center;
 }
 .login-header {
-  font-size: 28px;
+  font-size: 20px;
 }
 .login-header-container {
   margin-bottom: 20px;
@@ -71,7 +73,7 @@ function login() {
 .login-card {
   max-width: 400px;
   padding: 20px;
-  margin: 10% auto auto;
+  margin: 5% auto auto;
 }
 .flex-grow {
   flex-grow: 1;
