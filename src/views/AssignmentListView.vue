@@ -2,9 +2,11 @@
 import { inject, ref, Ref } from 'vue'
 import type { AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
+import AssignmentCardComponent from "@/components/AssignmentCardComponent.vue";
 
 const axios = inject('axios') as AxiosInstance
-const assignments: Ref<Assignment[]> = ref()
+const assignments: Ref<Assignment[] | undefined> = ref()
+const test = ref()
 
 axios
   .get('http://localhost:8080/assignment/listAll')
@@ -17,7 +19,12 @@ axios
 </script>
 
 <template>
-  <p>{{ assignments }}</p>
+  <div class="assignment-list-container">
+    <el-space direction="vertical">
+      <AssignmentCardComponent v-for="assignment in assignments" v-bind="assignment" />
+    </el-space>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

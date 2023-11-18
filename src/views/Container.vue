@@ -7,7 +7,9 @@ import HeaderMenuComponent from "@/components/HeaderMenuComponent.vue";
   <div class="layout-container">
     <el-container>
       <el-header>
-        <HeaderMenuComponent />
+        <el-affix>
+          <HeaderMenuComponent />
+        </el-affix>
       </el-header>
       <el-main>
         <RouterView />

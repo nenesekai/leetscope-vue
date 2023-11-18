@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { ElMessage } from "element-plus";
 import HeaderLogo from "@/components/HeaderLogo.vue";
 import { useDark, useToggle } from "@vueuse/core";
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -44,5 +45,8 @@ function logout() {
 <style scoped>
 .flex-grow {
   flex-grow: 1;
+}
+.header-menu {
+  background: var(--el-bg-color);
 }
 </style>
