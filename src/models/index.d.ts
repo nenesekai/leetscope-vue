@@ -8,7 +8,15 @@ interface Assignment {
   allowedAttempts: number
 }
 
-interface Result {
+interface Result<T> {
   code: string,
-  msg: string
+  msg: string,
+  data?: T
+}
+
+interface User {
+  id: string,
+  name: string,
+  isTeacher: boolean,
+  isStudent: boolean
 }

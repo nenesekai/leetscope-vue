@@ -1,5 +1,31 @@
 import { ElMessage } from "element-plus";
 import axios from "axios";
+import type { AxiosResponse } from "axios";
+import { useUserStore } from "@/stores/user";
+
+axios.interceptors.request.use(
+  config => {
+    const store = useUserStore()
+    if (store.isLogin) {
+      config.headers.Authorization = 'Bearer ' + store.token
+    }
+    return config
+  },
+  err => {
+    return Promise.reject(err)
+  }
+)
+
+axios.interceptors.response.use(
+  (response: AxiosResponse<Result<any>>) => {
+    const store = useUserStore()
+    if (response.data.code == 'EXPIRED_TOKEN') {
+      ElMessage.error('User token expired, please login again.')
+      store.logout()
+    }
+    return response
+  }
+)
 
 const API_URL = 'http://localhost:8080'
 const api = {
@@ -19,6 +45,16 @@ const api = {
         id: id
       }
     })
+  },
+  getUserById: (id: number): Promise<any> => {
+    return axios.get(API_URL + '/user/get', {
+      params: {
+        id: id
+      }
+    })
+  },
+  getCurrentUser: (): Promise<any> => {
+    return axios.get(API_URL + '/user/getCurrent')
   }
 }
 
