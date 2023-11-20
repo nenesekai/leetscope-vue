@@ -20,3 +20,13 @@ interface User {
   isTeacher: boolean,
   isStudent: boolean
 }
+
+interface Submission {
+  id: string,
+  uid: string,
+  assignmentId: string,
+  fileName: string,
+  isGraded: boolean,
+  isPass: boolean,
+  createTime: string
+}

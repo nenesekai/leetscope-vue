@@ -30,6 +30,7 @@ const clearHandler = () => {
       drag
       ref="upload"
       action="http://localhost:8080/submission/upload"
+      class="submission-uploader"
       :headers="{ Authorization: 'Bearer ' + store.token }"
       :data="{ assignmentId: assignment?.id }"
       :multiple="false"
@@ -47,4 +48,8 @@ const clearHandler = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.submission-uploader {
+  margin-bottom: 20px
+}
+</style>

@@ -46,6 +46,14 @@ const api = {
       }
     })
   },
+  listSubmissionsByUidAndAssignmentId: (uid: string, assignmentId: string): Promise<any> => {
+    return axios.get(API_URL+ '/submission/list', {
+      params: {
+        uid: uid,
+        assignmentId: assignmentId
+      }
+    })
+  },
   getUserById: (id: number): Promise<any> => {
     return axios.get(API_URL + '/user/get', {
       params: {
