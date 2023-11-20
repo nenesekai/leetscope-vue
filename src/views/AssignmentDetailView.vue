@@ -13,14 +13,13 @@ import {
   UploadRequestOptions,
   UploadUserFile
 } from "element-plus";
+import AssignmentDetailsPageHeader from "@/components/AssignmentDetailsPageHeader.vue";
 
 const route = useRoute()
 const router = useRouter()
 const assignment = ref<Assignment>()
 const upload = ref<UploadInstance>()
-const isOverdue = computed(() => {
-  return assignment.value == undefined ? false : (new Date(assignment.value.deadline) < new Date())
-})
+
 const invalid = ref(false)
 const user = ref<User>()
 const store = useUserStore()
@@ -68,60 +67,34 @@ const clearHandler = () => {
     </template>
   </el-result>
   <div class="assignment-detail-container" v-else>
-    <el-page-header @back="router.back()">
-      <template #content>
-        <div class="flex items-center">
-          <span> {{assignment != undefined ? assignment.title : ''}} </span>
+    <AssignmentDetailsPageHeader :assignment="assignment" :user="user" />
+
+    <div class="submit-area-container" v-if="user != undefined && user.isStudent">
+      <el-upload
+        drag
+        ref="upload"
+        action="http://localhost:8080/submission/upload"
+        :headers="{ Authorization: 'Bearer ' + store.token }"
+        :data="{ assignmentId: assignment?.id }"
+        :file-list="files"
+        :multiple="false"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :auto-upload="false"
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          Submit your work here
         </div>
-      </template>
-      <template #extra>
-        <div class="flex items-center">
-          <el-button v-if="user?.isTeacher" type="primary" class="ml-2">Edit</el-button>
-        </div>
-      </template>
-
-      <el-descriptions :column="3" size="large" class="assignment-detail-description">
-        <el-descriptions-item v-if="assignment != undefined" label="Create Time">{{new Date(assignment.createTime).toLocaleString()}}</el-descriptions-item>
-        <el-descriptions-item v-if="assignment != undefined" label="Deadline">{{new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
-        <el-descriptions-item v-if="assignment != undefined" label="Allowed Attempts">{{assignment.allowedAttempts}}</el-descriptions-item>
-        <el-descriptions-item v-if="assignment != undefined" label="ID">{{assignment.id}}</el-descriptions-item>
-        <el-descriptions-item label="Status">
-          <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
-          <el-tag v-else>Active</el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item v-if="assignment != undefined && assignment.description != undefined" label="Description">{{assignment.description}}</el-descriptions-item>
-      </el-descriptions>
-
-      <div class="submit-area-container" v-if="user != undefined && user.isStudent">
-        <el-upload
-          drag
-          ref="upload"
-          action="http://localhost:8080/submission/upload"
-          :headers="{ Authorization: 'Bearer ' + store.token }"
-          :data="{ assignmentId: assignment?.id }"
-          :file-list="files"
-          :multiple="false"
-          :limit="1"
-          :on-exceed="handleExceed"
-          :auto-upload="false"
-        >
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">
-            Submit your work here
-          </div>
-        </el-upload>
-        <el-space>
-          <el-button @click="clearHandler">Clear</el-button>
-          <el-button type="primary" @click="submitHandler">Submit</el-button>
-        </el-space>
-      </div>
-
-    </el-page-header>
+      </el-upload>
+      <el-space>
+        <el-button @click="clearHandler">Clear</el-button>
+        <el-button type="primary" @click="submitHandler">Submit</el-button>
+      </el-space>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.assignment-detail-description {
-  margin: 20px;
-}
+
 </style>

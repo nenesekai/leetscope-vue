@@ -55,9 +55,6 @@ const api = {
   },
   getCurrentUser: (): Promise<any> => {
     return axios.get(API_URL + '/user/getCurrent')
-  },
-  submit: (data): Promise<any> => {
-    return axios.post(API_URL + '/submission/create', {}, data)
   }
 }
 
