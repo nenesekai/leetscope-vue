@@ -1,16 +1,37 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api";
-import type { AxiosResponse } from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
 import { computed, ref } from "vue";
+import { UploadFilled } from '@element-plus/icons-vue'
+import { useUserStore } from "@/stores/user";
+import {
+  ElMessage, genFileId, UploadInstance,
+  UploadProps,
+  UploadRawFile,
+  UploadRequestHandler,
+  UploadRequestOptions,
+  UploadUserFile
+} from "element-plus";
 
 const route = useRoute()
 const router = useRouter()
 const assignment = ref<Assignment>()
+const upload = ref<UploadInstance>()
 const isOverdue = computed(() => {
   return assignment.value == undefined ? false : (new Date(assignment.value.deadline) < new Date())
 })
 const invalid = ref(false)
+const user = ref<User>()
+const store = useUserStore()
+let files: UploadUserFile[] = []
+if (store.isLogin) {
+  api.getCurrentUser().then((response: AxiosResponse) => {
+    user.value = response.data.data
+  }).catch((err: AxiosError) => {
+    ElMessage.error(err)
+  })
+}
 api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) => {
   if (response.data.code == 'SUCCESS') {
     assignment.value = response.data.data
@@ -18,6 +39,21 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
     invalid.value = true
   }
 })
+
+const handleExceed: UploadProps['onExceed'] = (files: File[]) => {
+  upload.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  upload.value!.handleStart(file)
+}
+
+const submitHandler = () => {
+  upload.value!.submit()
+}
+
+const clearHandler = () => {
+  upload.value!.clearFiles()
+}
 </script>
 
 <template>
@@ -40,8 +76,7 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
       </template>
       <template #extra>
         <div class="flex items-center">
-          <el-button>Print</el-button>
-          <el-button type="primary" class="ml-2">Edit</el-button>
+          <el-button v-if="user?.isTeacher" type="primary" class="ml-2">Edit</el-button>
         </div>
       </template>
 
@@ -49,12 +84,37 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
         <el-descriptions-item v-if="assignment != undefined" label="Create Time">{{new Date(assignment.createTime).toLocaleString()}}</el-descriptions-item>
         <el-descriptions-item v-if="assignment != undefined" label="Deadline">{{new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
         <el-descriptions-item v-if="assignment != undefined" label="Allowed Attempts">{{assignment.allowedAttempts}}</el-descriptions-item>
+        <el-descriptions-item v-if="assignment != undefined" label="ID">{{assignment.id}}</el-descriptions-item>
         <el-descriptions-item label="Status">
           <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
           <el-tag v-else>Active</el-tag>
         </el-descriptions-item>
         <el-descriptions-item v-if="assignment != undefined && assignment.description != undefined" label="Description">{{assignment.description}}</el-descriptions-item>
       </el-descriptions>
+
+      <div class="submit-area-container" v-if="user != undefined && user.isStudent">
+        <el-upload
+          drag
+          ref="upload"
+          action="http://localhost:8080/submission/upload"
+          :headers="{ Authorization: 'Bearer ' + store.token }"
+          :data="{ assignmentId: assignment?.id }"
+          :file-list="files"
+          :multiple="false"
+          :limit="1"
+          :on-exceed="handleExceed"
+          :auto-upload="false"
+        >
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            Submit your work here
+          </div>
+        </el-upload>
+        <el-space>
+          <el-button @click="clearHandler">Clear</el-button>
+          <el-button type="primary" @click="submitHandler">Submit</el-button>
+        </el-space>
+      </div>
 
     </el-page-header>
   </div>
