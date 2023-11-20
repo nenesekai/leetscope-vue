@@ -14,6 +14,7 @@ import {
   UploadUserFile
 } from "element-plus";
 import AssignmentDetailsPageHeader from "@/components/AssignmentDetailsPageHeader.vue";
+import AssignmentIdInvalidError from "@/components/AssignmentIdInvalidError.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -56,16 +57,7 @@ const clearHandler = () => {
 </script>
 
 <template>
-  <el-result
-    icon="error"
-    title="Invalid Assignment ID"
-    sub-title="Please do not modify the url :)"
-    v-if="invalid"
-  >
-    <template #extra>
-      <el-button type="primary" @click="router.push('/assignments')">Go Back to Dashboard</el-button>
-    </template>
-  </el-result>
+  <AssignmentIdInvalidError v-if="invalid" />
   <div class="assignment-detail-container" v-else>
     <AssignmentDetailsPageHeader :assignment="assignment" :user="user" />
 
