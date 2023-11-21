@@ -2,27 +2,21 @@
 import { useRouter } from "vue-router";
 import { computed } from "vue";
 
-defineProps({
-  id: Number,
-  title: String,
-  description: String,
-  deadline: String,
-  allowedAttempts: Number
-})
+const props = defineProps<{assignment: Assignment}>()
 const router = useRouter()
 </script>
 
 <template>
   <el-card class="assignment-card" shadow="hover">
     <el-descriptions
-      :title="title"
+      :title="assignment.title"
       :column="1"
     >
       <template #extra>
-        <el-button type="primary" @click="router.push('/assignmentDetail/' + id)">Details</el-button>
+        <el-button type="primary" @click="router.push('/assignmentDetail/' + assignment.id)">Details</el-button>
       </template>
-      <el-descriptions-item v-if="description != undefined" label="Description">{{description}}</el-descriptions-item>
-      <el-descriptions-item v-if="deadline != undefined" label="Deadline">{{new Date(deadline).toLocaleString()}}</el-descriptions-item>
+      <el-descriptions-item v-if="assignment.description != undefined" label="Description">{{assignment.description}}</el-descriptions-item>
+      <el-descriptions-item v-if="assignment.deadline != undefined" label="Deadline">{{new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
     </el-descriptions>
   </el-card>
 </template>

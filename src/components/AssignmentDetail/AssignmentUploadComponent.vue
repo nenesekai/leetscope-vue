@@ -3,9 +3,11 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
 import { ElMessage, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{ assignment?: Assignment; user?: User }>()
 const store = useUserStore()
+const router = useRouter()
 const upload = ref<UploadInstance>()
 
 const handleExceed: UploadProps['onExceed'] = (files: File[]) => {
@@ -22,6 +24,10 @@ const submitHandler = () => {
 const clearHandler = () => {
   upload.value!.clearFiles()
 }
+
+const handleSuccess = () => {
+  location.reload()
+}
 </script>
 
 <template>
@@ -36,6 +42,7 @@ const clearHandler = () => {
       :multiple="false"
       :limit="1"
       :on-exceed="handleExceed"
+      :on-success="handleSuccess"
       :auto-upload="false"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>

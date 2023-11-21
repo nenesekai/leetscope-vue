@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from "vue";
 import type {
   FormInstance,
   FormRules,
@@ -14,6 +14,7 @@ import { ElMessage, genFileId } from "element-plus";
 import api from '@/api'
 import type { AxiosError, AxiosResponse } from 'axios'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { useUserStore } from "@/stores/user";
 
 const router = useRouter()
 const requestDatas = ref({
@@ -117,10 +118,31 @@ const onSubmit = async (formInstance: FormInstance | undefined) => {
     }
   })
 }
+
+const store = useUserStore()
+const user = ref<User>()
+const invalid = ref(false)
+if (store.isLogin) {
+  api.getCurrentUser().then((response: AxiosResponse<Result<User>>) => {
+    user.value = response.data.data!
+  })
+} else {
+  invalid.value = true
+}
 </script>
 
 <template>
-  <el-page-header @back="router.back()">
+  <el-result
+    icon="error"
+    title="You do not have permission to create new Assignment"
+    sub-title="You need to be a teacher in order to be able to create a new assignment. Please check what account you are logged in"
+    v-if="invalid"
+  >
+    <template #extra>
+      <el-button type="primary" @click="router.back()">Back</el-button>
+    </template>
+  </el-result>
+  <el-page-header v-else @back="router.back()">
     <template #content>
       <span class="text-large font-600 mr-3"> Create New Assignment </span>
     </template>
