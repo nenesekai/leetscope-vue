@@ -2,7 +2,7 @@
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
-import { genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { ElMessage, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 
 const props = defineProps<{ assignment?: Assignment; user?: User }>()
 const store = useUserStore()

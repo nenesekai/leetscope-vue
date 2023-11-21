@@ -1,12 +1,32 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
+import api from "@/api";
+import type { AxiosError, AxiosResponse } from "axios";
+import { ElMessage } from "element-plus";
 
 const props = defineProps<{assignment?: Assignment, user?: User}>()
 
 const router = useRouter()
+const assigner = ref('Loading')
+
 const isOverdue = computed(() => {
   return props.assignment == undefined ? false : (new Date(props.assignment.deadline) < new Date())
+})
+watchEffect(() => {
+  if (props.assignment == undefined) {
+    assigner.value = 'Loading'
+  } else {
+    api.getUserById(Number(props.assignment.uid)).then(
+      (response: AxiosResponse<Result<User>>) => {
+        if (response.data.data == undefined) {
+          assigner.value = 'Undefined'
+        } else {
+          assigner.value = response.data.data.name
+        }
+      }
+    )
+  }
 })
 </script>
 
@@ -27,7 +47,7 @@ const isOverdue = computed(() => {
       <el-descriptions-item label="Create Time">{{assignment == undefined ? 'Loading' : new Date(assignment.createTime).toLocaleString()}}</el-descriptions-item>
       <el-descriptions-item label="Deadline">{{assignment == undefined ? 'Loading' : new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
       <el-descriptions-item label="Allowed Attempts">{{assignment == undefined ? 'Loading' : assignment.allowedAttempts}}</el-descriptions-item>
-      <el-descriptions-item label="ID">{{assignment == undefined ? 'Loading' : assignment.id}}</el-descriptions-item>
+      <el-descriptions-item label="Assigner">{{assigner}}</el-descriptions-item>
       <el-descriptions-item label="Status">
         <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
         <el-tag v-else>Active</el-tag>

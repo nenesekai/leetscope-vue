@@ -63,6 +63,9 @@ const api = {
   },
   getCurrentUser: (): Promise<any> => {
     return axios.get(API_URL + '/user/getCurrent')
+  },
+  createNewAssignment: (assignment: Object): Promise<any> => {
+    return axios.post(API_URL + '/assignment/create', assignment)
   }
 }
 

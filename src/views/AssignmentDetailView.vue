@@ -11,6 +11,7 @@ import AssignmentUploadComponent from "@/components/AssignmentDetail/AssignmentU
 import SubmissionCardComponent from "@/components/AssignmentDetail/SubmissionCardComponent.vue";
 
 const route = useRoute()
+const router = useRouter()
 const assignment = ref<Assignment>()
 const user = ref<User>()
 const submissionList = ref<Submission[]>()
@@ -21,10 +22,15 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
     assignment.value = response.data.data
     if (store.isLogin) {
       api.getCurrentUser().then((response: AxiosResponse) => {
-        user.value = response.data.data
-        api.listSubmissionsByUidAndAssignmentId(user.value!.id, assignment.value!.id).then((response: AxiosResponse) => {
-          submissionList.value = response.data.data
-        })
+        if (response.status != 200) {
+          invalid.value = true
+          ElMessage.error(response.statusText)
+        } else {
+          user.value = response.data.data
+          api.listSubmissionsByUidAndAssignmentId(user.value!.id, assignment.value!.id).then((response: AxiosResponse) => {
+            submissionList.value = response.data.data
+          })
+        }
       }).catch((err: AxiosError) => {
         ElMessage.error(err)
       })
@@ -32,6 +38,8 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
   } else {
     invalid.value = true
   }
+}).catch((err) => {
+  invalid.value = true
 })
 
 </script>
