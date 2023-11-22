@@ -54,6 +54,9 @@ const api = {
       }
     })
   },
+  updateAssignment: (id: number, data: object): Promise<any> => {
+    return axios.put(API_URL + `/assignment/${id}`, data); // Use PUT for updating
+  },
   getUserById: (id: number): Promise<any> => {
     return axios.get(API_URL + '/user/get', {
       params: {
