@@ -7,7 +7,6 @@ const props = defineProps<{submission: Submission}>()
     <template #header>
       <div class="card-header">
         <span>Submission {{submission.id}}</span>
-        <el-button class="button" text>Operation button</el-button>
       </div>
     </template>
     <el-descriptions :column="4">
