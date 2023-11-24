@@ -9,6 +9,7 @@ import AssignmentDetailsPageHeader from "@/components/AssignmentDetail/Assignmen
 import AssignmentIdInvalidError from "@/components/AssignmentDetail/AssignmentIdInvalidError.vue";
 import AssignmentUploadComponent from "@/components/AssignmentDetail/AssignmentUploadComponent.vue";
 import SubmissionCardComponent from "@/components/AssignmentDetail/SubmissionCardComponent.vue";
+import SubmissionListStudent from "@/components/AssignmentDetail/SubmissionListComponent.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -27,7 +28,7 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
           ElMessage.error(response.statusText)
         } else {
           user.value = response.data.data
-          api.listSubmissionsByUidAndAssignmentId(user.value!.id, assignment.value!.id).then((response: AxiosResponse) => {
+          api.listSubmissionsByAssignmentId(assignment.value!.id).then((response: AxiosResponse) => {
             submissionList.value = response.data.data
           })
         }
@@ -50,38 +51,13 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
     <AssignmentDetailsPageHeader :assignment="assignment" :user="user" :submissionList="submissionList" />
     <el-main>
       <AssignmentUploadComponent class="item" :assignment="assignment" :user="user" :submission-list="submissionList" v-if="user != undefined && user.isStudent" />
-      <div v-if="user != undefined && user.isStudent">
-        <el-divider></el-divider>
-        <div class="submission-list-header-container">
-          <el-text class="submission-list-header">Your Submissions: </el-text>
-        </div>
-        <el-scrollbar class="submission-list-container" max-height="400px">
-          <el-empty v-if="submissionList == undefined || submissionList!.length == 0"></el-empty>
-          <SubmissionCardComponent v-for="submission in submissionList" class="submission-card" :submission="submission" />
-        </el-scrollbar>
-      </div>
+      <SubmissionListStudent v-if="user != undefined" :user="user" :submission-list="submissionList" />
     </el-main>
   </div>
 </template>
 
 <style scoped>
 .item {
-  margin-bottom: 20px;
-}
-.submission-list-header {
-  font-size: 18px;
-  font-weight: bolder;
-  text-align: start;
-}
-.submission-list-header-container {
-  margin-bottom: 20px
-}
-.submission-list-container {
-  padding: 20px;
-  border: 2px solid var(--el-border-color);
-  border-radius: 18px
-}
-.submission-card {
   margin-bottom: 20px;
 }
 </style>
