@@ -2,10 +2,10 @@
 import { UploadFilled } from '@element-plus/icons-vue'
 import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
-import { ElMessage, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { ElMessage, ElMessageBox, genFileId, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import { useRouter } from "vue-router";
 
-const props = defineProps<{ assignment?: Assignment; user?: User }>()
+const props = defineProps<{ assignment?: Assignment; user?: User, submissionList?: Submission[] }>()
 const store = useUserStore()
 const router = useRouter()
 const upload = ref<UploadInstance>()
@@ -18,7 +18,12 @@ const handleExceed: UploadProps['onExceed'] = (files: File[]) => {
 }
 
 const submitHandler = () => {
-  upload.value!.submit()
+  if (props.assignment == undefined || props.submissionList == undefined) return
+  if (props.assignment.allowedAttempts - props.submissionList.length <= 0) {
+    ElMessageBox.alert('You have no remaining allowed attempts left!')
+  } else {
+    upload.value!.submit()
+  }
 }
 
 const clearHandler = () => {

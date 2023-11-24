@@ -50,7 +50,8 @@ watchEffect(() => {
       <el-descriptions-item v-else label="Remaining Attempts">{{submissionList == undefined || assignment == undefined ? 'Loading' : assignment.allowedAttempts - submissionList.length}}</el-descriptions-item>
       <el-descriptions-item label="Assigner">{{assigner}}</el-descriptions-item>
       <el-descriptions-item label="Status">
-        <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
+        <el-tag v-if="submissionList != undefined && submissionList.length > 0">Submitted</el-tag>
+        <el-tag v-else-if="isOverdue" type="danger">Expired</el-tag>
         <el-tag v-else>Active</el-tag>
       </el-descriptions-item>
       <el-descriptions-item v-if="assignment != undefined && assignment.description != undefined" label="Description">{{assignment.description}}</el-descriptions-item>
