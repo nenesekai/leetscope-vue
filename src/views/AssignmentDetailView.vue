@@ -47,7 +47,7 @@ api.getAssignmentById(Number(route.params.id)).then((response: AxiosResponse) =>
 <template>
   <AssignmentIdInvalidError v-if="invalid" />
   <div class="assignment-detail-container" v-else>
-    <AssignmentDetailsPageHeader :assignment="assignment" :user="user" />
+    <AssignmentDetailsPageHeader :assignment="assignment" :user="user" :submissionList="submissionList" />
     <el-main>
       <AssignmentUploadComponent class="item" :assignment="assignment" :user="user" v-if="user != undefined && user.isStudent" />
       <div v-if="user != undefined && user.isStudent">

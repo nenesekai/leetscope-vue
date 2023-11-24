@@ -5,7 +5,7 @@ import api from "@/api";
 import type { AxiosError, AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
 
-const props = defineProps<{assignment?: Assignment, user?: User}>()
+const props = defineProps<{assignment?: Assignment, user?: User, submissionList?: Submission[]}>()
 
 const router = useRouter()
 const assigner = ref('Loading')
@@ -46,7 +46,8 @@ watchEffect(() => {
     <el-descriptions :column="3" size="large" class="assignment-detail-description">
       <el-descriptions-item label="Create Time">{{assignment == undefined ? 'Loading' : new Date(assignment.createTime).toLocaleString()}}</el-descriptions-item>
       <el-descriptions-item label="Deadline">{{assignment == undefined ? 'Loading' : new Date(assignment.deadline).toLocaleString()}}</el-descriptions-item>
-      <el-descriptions-item label="Allowed Attempts">{{assignment == undefined ? 'Loading' : assignment.allowedAttempts}}</el-descriptions-item>
+      <el-descriptions-item v-if="user == undefined || user.isTeacher" label="Allowed Attempts">{{assignment == undefined ? 'Loading' : assignment.allowedAttempts}}</el-descriptions-item>
+      <el-descriptions-item v-else label="Remaining Attempts">{{submissionList == undefined || assignment == undefined ? 'Loading' : assignment.allowedAttempts - submissionList.length}}</el-descriptions-item>
       <el-descriptions-item label="Assigner">{{assigner}}</el-descriptions-item>
       <el-descriptions-item label="Status">
         <el-tag v-if="isOverdue" type="danger">Expired</el-tag>
