@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 import { ref, computed, watchEffect } from "vue";
 import api from "@/api";
 import type { AxiosError, AxiosResponse } from "axios";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const props = defineProps<{assignment?: Assignment, user?: User, submissionList?: Submission[]}>()
 
@@ -28,6 +28,29 @@ watchEffect(() => {
     )
   }
 })
+
+function deleteAssignment() {
+  ElMessageBox.confirm(
+    'This will permanently delete the assignment. Are you sure you wanna do this?',
+    'Deleting Assignment',
+    {
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }
+  ).then(() => {
+    api.deleteAssignment(props.assignment!.id).then((response: AxiosResponse<Result<any>>) => {
+      if (response.data.code == 'SUCCESS') {
+        ElMessage('Successfully Deleted')
+        router.push('/assignments')
+      } else {
+        ElMessage.error(response.data.msg)
+      }
+    })
+  }).catch((err: AxiosError) => {
+    ElMessage.error(err.message)
+  })
+}
 </script>
 
 <template>
@@ -39,7 +62,8 @@ watchEffect(() => {
     </template>
     <template #extra>
       <div class="flex items-center">
-        <el-button v-if="user?.isTeacher" type="primary" class="ml-2">Edit</el-button>
+        <el-button v-if="user?.isTeacher" class="ml-2">Edit</el-button>
+        <el-button v-if="user?.isTeacher" type="danger" class="ml-2" @click="deleteAssignment">Delete</el-button>
       </div>
     </template>
 
