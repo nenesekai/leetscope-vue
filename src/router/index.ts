@@ -7,6 +7,7 @@ import IntroductionView from "@/views/IntroductionView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import AssignmentDetailView from "@/views/AssignmentDetailView.vue";
 import NewAssignmentView from "@/views/NewAssignmentView.vue";
+import EditAssignmentView from "@/views/EditAssignmentView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,10 @@ const router = createRouter({
         {
           path: '/newAssignment',
           component: NewAssignmentView
+        },
+        {
+          path: '/editAssignment/:id',
+          component: EditAssignmentView
         }
       ]
     },

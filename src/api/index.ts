@@ -54,8 +54,8 @@ const api = {
       }
     })
   },
-  updateAssignment: (id: number, data: object): Promise<any> => {
-    return axios.put(API_URL + `/assignment/${id}`, data); // TODO
+  updateAssignment: (assignment: Assignment): Promise<any> => {
+    return axios.post(API_URL + '/assignment/update', assignment);
   },
   deleteAssignment: (id: string): Promise<any> => {
     return axios.delete(API_URL + '/assignment/delete', {
