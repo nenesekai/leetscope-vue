@@ -21,6 +21,8 @@ const submitHandler = () => {
   if (props.assignment == undefined || props.submissionList == undefined) return
   if (props.assignment.allowedAttempts - props.submissionList.length <= 0) {
     ElMessageBox.alert('You have no remaining allowed attempts left!')
+  } else if (new Date(props.assignment.deadline) < new Date()) {
+    ElMessageBox.alert('This assignment is now overdue')
   } else {
     upload.value!.submit()
   }
