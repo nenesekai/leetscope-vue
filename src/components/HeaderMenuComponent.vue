@@ -46,7 +46,6 @@ function logout() {
     <div class="flex-grow" />
     <el-sub-menu v-if="store.isLogin" index="/account">
       <template #title>{{user == undefined ? 'Loading' : user.name}}</template>
-      <el-menu-item index="/settings">Settings</el-menu-item>
       <el-menu-item @click="toggleDark()">Dark Mode: {{isDark ? 'On': 'Off'}}</el-menu-item>
       <el-menu-item index="/logout" @click="logout">Log Out</el-menu-item>
     </el-sub-menu>

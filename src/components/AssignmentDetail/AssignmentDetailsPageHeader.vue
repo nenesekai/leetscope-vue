@@ -62,7 +62,7 @@ function deleteAssignment() {
     </template>
     <template #extra>
       <div class="flex items-center">
-        <el-button v-if="user?.isTeacher" class="ml-2">Edit</el-button>
+        <el-button v-if="user?.isTeacher" class="ml-2" @click="router.push('/editAssignment/' + assignment!.id)">Edit</el-button>
         <el-button v-if="user?.isTeacher" type="danger" class="ml-2" @click="deleteAssignment">Delete</el-button>
       </div>
     </template>
